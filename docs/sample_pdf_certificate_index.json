@@ -1,0 +1,631 @@
+{
+  "source_file": "AA Electro Magnetic Test Laboratory Private Limited-2.pdf",
+  "pdf_pages": 32,
+  "logical_certificate_count": 31,
+  "certificate_groups": [
+    {
+      "ulr": "CC205524000002952F",
+      "page_start": 1,
+      "page_end": 1,
+      "pages": [
+        {
+          "page": 1,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Crush Test Machine",
+      "make_model": "Harriss & Tarriss/-",
+      "range": "0 to 15 KN",
+      "least_count": "0.01 KN",
+      "instrument_id": "AAEMT/ELEC/240",
+      "parameter": "Force",
+      "calibration_date": "16-Jul-2024",
+      "next_calibration_date": "15-Jul-2025",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC205524000003054F",
+      "page_start": 2,
+      "page_end": 2,
+      "pages": [
+        {
+          "page": 2,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Computerized Battery Short Circuit",
+      "make_model": "Map Electronics/-",
+      "range": "80 M\u2126",
+      "least_count": "As per Range",
+      "instrument_id": "AAEMT/ELEC/245",
+      "parameter": "Electro Technical",
+      "calibration_date": "17-Jul-2024",
+      "next_calibration_date": "16-Jul-2025",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC205524000003306F",
+      "page_start": 3,
+      "page_end": 3,
+      "pages": [
+        {
+          "page": 3,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "DC Power Supply",
+      "make_model": "Shangdong/-",
+      "range": "0 to 60 V",
+      "least_count": "0.01 V",
+      "instrument_id": "AAEMT/ELEC/225",
+      "parameter": "Electro Technical",
+      "calibration_date": "19-Jul-2024",
+      "next_calibration_date": "18-Jul-2025",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC205524000003307F",
+      "page_start": 4,
+      "page_end": 4,
+      "pages": [
+        {
+          "page": 4,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "DC Power Supply",
+      "make_model": "Shangdong/-",
+      "range": "0 to 60 V",
+      "least_count": "0.01 V",
+      "instrument_id": "AAEMT/ELEC/224",
+      "parameter": "Electro Technical",
+      "calibration_date": "19-Jul-2024",
+      "next_calibration_date": "18-Jul-2025",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405824000000402F",
+      "page_start": 5,
+      "page_end": 5,
+      "pages": [
+        {
+          "page": 5,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Digital Insulation Tester",
+      "make_model": "Tinsley/5871P",
+      "range": "As per Specification",
+      "least_count": "As per Range",
+      "instrument_id": "AAEMT/ELEC/116",
+      "parameter": "Electro Technical",
+      "calibration_date": "2-Nov-2024",
+      "next_calibration_date": "1-Nov-2025",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405824000000410F",
+      "page_start": 6,
+      "page_end": 6,
+      "pages": [
+        {
+          "page": 6,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Heating Encloser",
+      "make_model": "Sunrise Scientific Instrument/-",
+      "range": "Amb. to 150 \u00b0C",
+      "least_count": "0.1\u00b0C",
+      "instrument_id": "AAEMT/ELEC/060",
+      "parameter": "Thermal",
+      "calibration_date": "2-Nov-2024",
+      "next_calibration_date": "1-Nov-2025",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405824000000413F",
+      "page_start": 7,
+      "page_end": 7,
+      "pages": [
+        {
+          "page": 7,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Digital Insulation Tester",
+      "make_model": "MC/LK2679D",
+      "range": "As per Specification",
+      "least_count": "As per Range",
+      "instrument_id": "AAEMT/ELEC/087",
+      "parameter": "Electro Technical",
+      "calibration_date": "13-Nov-2024",
+      "next_calibration_date": "13-Nov-2025",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405824000000424F",
+      "page_start": 8,
+      "page_end": 8,
+      "pages": [
+        {
+          "page": 8,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Dust Test Chamber",
+      "make_model": "Warmax India/WMI/DTC/100/IP",
+      "range": "Amb. to 50 \u00b0C, 20 to 40 % RH",
+      "least_count": "0.1\u00b0C, 1% RH",
+      "instrument_id": "AAEMT/ELEC/019",
+      "parameter": "Thermal",
+      "calibration_date": "2-Nov-2024",
+      "next_calibration_date": "1-Nov-2025",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000208F",
+      "page_start": 9,
+      "page_end": 9,
+      "pages": [
+        {
+          "page": 9,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Push Pull Gauge",
+      "make_model": "Inogu/ZP-500N",
+      "range": "0 to 500 N",
+      "least_count": "0.1 N",
+      "instrument_id": "AAEMT/ELEC/081",
+      "parameter": "Force",
+      "calibration_date": "7-Jan-2025",
+      "next_calibration_date": "6-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000210F",
+      "page_start": 10,
+      "page_end": 10,
+      "pages": [
+        {
+          "page": 10,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Tachometer",
+      "make_model": "Luolider/UT372",
+      "range": "0 to 99999 rpm",
+      "least_count": "1 rpm",
+      "instrument_id": "AAEMT/ELEC/085",
+      "parameter": "Speed",
+      "calibration_date": "7-Jan-2025",
+      "next_calibration_date": "6-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000211F",
+      "page_start": 11,
+      "page_end": 11,
+      "pages": [
+        {
+          "page": 11,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Timer (Dripping Test Equipment)",
+      "make_model": "E-lin/JSS20-106-A",
+      "range": "0 to 999 sec",
+      "least_count": "0.01 sec",
+      "instrument_id": "AAEMT/ELEC/119",
+      "parameter": "Electro Technical",
+      "calibration_date": "7-Jan-2025",
+      "next_calibration_date": "6-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000212F",
+      "page_start": 12,
+      "page_end": 12,
+      "pages": [
+        {
+          "page": 12,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Ampere Meter (Cord Flexing)",
+      "make_model": "Sunrise Scientific Instruments/-",
+      "range": "0 to 4 A",
+      "least_count": "0.01 A",
+      "instrument_id": "AAEMT/ELEC/047",
+      "parameter": "Electro Technical",
+      "calibration_date": "7-Jan-2025",
+      "next_calibration_date": "6-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000213F",
+      "page_start": 13,
+      "page_end": 13,
+      "pages": [
+        {
+          "page": 13,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Sulfur Dioxide Chamber",
+      "make_model": "-/WEW-SO-90D",
+      "range": "Amb. to 40 \u00b0C",
+      "least_count": "1 \u00b0C",
+      "instrument_id": "AAEMT/ELEC/278",
+      "parameter": "Thermal",
+      "calibration_date": "7-Jan-2025",
+      "next_calibration_date": "6-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000214F",
+      "page_start": 14,
+      "page_end": 14,
+      "pages": [
+        {
+          "page": 14,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Salt Spray Chamber",
+      "make_model": "Sunrise Scientific Instruments/-",
+      "range": "0 - 50 \u00b0C, 0 to 99 % RH",
+      "least_count": "0.1\u00b0C, 1% RH",
+      "instrument_id": "AAEMT/ELEC/279",
+      "parameter": "Thermal",
+      "calibration_date": "7-Jan-2025",
+      "next_calibration_date": "6-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000215F",
+      "page_start": 15,
+      "page_end": 15,
+      "pages": [
+        {
+          "page": 15,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Water Bath",
+      "make_model": "Sunrise Scientific Instruments/-",
+      "range": "0 to 100 \u00b0C",
+      "least_count": "0.1\u00b0C",
+      "instrument_id": "AAEMT/ELEC/244",
+      "parameter": "Thermal",
+      "calibration_date": "7-Jan-2025",
+      "next_calibration_date": "6-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000216F",
+      "page_start": 16,
+      "page_end": 16,
+      "pages": [
+        {
+          "page": 16,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "DIgital Vernier Caliper",
+      "make_model": "Insize/-",
+      "range": "0 to 300 mm",
+      "least_count": "0.01mm",
+      "instrument_id": "AAEMT/ELEC/223",
+      "parameter": "Dimension",
+      "calibration_date": "7-Jan-2025",
+      "next_calibration_date": "6-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000219F",
+      "page_start": 17,
+      "page_end": 17,
+      "pages": [
+        {
+          "page": 17,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Salt Spray Chamber",
+      "make_model": "Sunrise Scientific Instruments/-",
+      "range": "0 - 50 \u00b0C, 0 to 99 % RH",
+      "least_count": "0.1\u00b0C, 1% RH",
+      "instrument_id": "AAEMT/ELEC/214",
+      "parameter": "Thermal",
+      "calibration_date": "7-Jan-2025",
+      "next_calibration_date": "6-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000220F",
+      "page_start": 18,
+      "page_end": 18,
+      "pages": [
+        {
+          "page": 18,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Digital Tachometer",
+      "make_model": "Lutron/DT-2234C",
+      "range": "5 to 99999 rpm",
+      "least_count": "0.1, 1 rpm",
+      "instrument_id": "AAEMT/ELEC/199",
+      "parameter": "Speed",
+      "calibration_date": "7-Jan-2025",
+      "next_calibration_date": "6-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000221F",
+      "page_start": 19,
+      "page_end": 19,
+      "pages": [
+        {
+          "page": 19,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Standard Resistance Box",
+      "make_model": "Sigma/-",
+      "range": "As per Specification",
+      "least_count": "As per Range",
+      "instrument_id": "AAEMT/ELEC/061",
+      "parameter": "Electro Technical",
+      "calibration_date": "7-Jan-2025",
+      "next_calibration_date": "6-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000747F",
+      "page_start": 20,
+      "page_end": 20,
+      "pages": [
+        {
+          "page": 20,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Digital Sound Level Meter",
+      "make_model": "Chauvin Arnoux/CA 832",
+      "range": "30 to 130 dB",
+      "least_count": "0.1 dB",
+      "instrument_id": "AAEMT/ELEC/005",
+      "parameter": "Acoustic",
+      "calibration_date": "1-Feb-2025",
+      "next_calibration_date": "31-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000756F",
+      "page_start": 21,
+      "page_end": 21,
+      "pages": [
+        {
+          "page": 21,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "RPM Meter & Pressure Gauge",
+      "make_model": "Kawili H Guru/-",
+      "range": "0 to 999999 rpm",
+      "least_count": "1 rpm",
+      "instrument_id": "AAMET/ELEC/117",
+      "parameter": "Speed",
+      "calibration_date": "21-Jan-2025",
+      "next_calibration_date": "20-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000757F",
+      "page_start": 22,
+      "page_end": 22,
+      "pages": [
+        {
+          "page": 22,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "RPM Meter & Pressure Gauge",
+      "make_model": "Kawili H Guru/-",
+      "range": "0 to 7 kg/cm2",
+      "least_count": "0.2 kg/cm2",
+      "instrument_id": "AAMET/ELEC/117",
+      "parameter": "Pressure",
+      "calibration_date": "21-Jan-2025",
+      "next_calibration_date": "20-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000758F",
+      "page_start": 23,
+      "page_end": 23,
+      "pages": [
+        {
+          "page": 23,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "DC Regulated Power Supply",
+      "make_model": "Junke/JK20050K",
+      "range": "0 to 200 VDC/0 to 50ADC",
+      "least_count": "1 VDC/0.1ADC",
+      "instrument_id": "AAMET/ELEC/219",
+      "parameter": "Electro Technical",
+      "calibration_date": "21-Jan-2025",
+      "next_calibration_date": "20-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000759F",
+      "page_start": 24,
+      "page_end": 24,
+      "pages": [
+        {
+          "page": 24,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "DC Regulated Power Supply",
+      "make_model": "Junke/JK20050K",
+      "range": "0 to 200 VDC/0 to 50ADC",
+      "least_count": "1 VDC/0.1ADC",
+      "instrument_id": "AAMET/ELEC/220",
+      "parameter": "Electro Technical",
+      "calibration_date": "21-Jan-2025",
+      "next_calibration_date": "20-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000760F",
+      "page_start": 25,
+      "page_end": 25,
+      "pages": [
+        {
+          "page": 25,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "DC Electronic Load",
+      "make_model": "Jaritul/JT6321A",
+      "range": "0 to 150 VDC/0 to 120ADC",
+      "least_count": "0.001 VDC/0.001ADC",
+      "instrument_id": "AAMET/ELEC/230",
+      "parameter": "Electro Technical",
+      "calibration_date": "21-Jan-2025",
+      "next_calibration_date": "20-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000761F",
+      "page_start": 26,
+      "page_end": 26,
+      "pages": [
+        {
+          "page": 26,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "DC Electronic Load",
+      "make_model": "Itech/IT 8511A+",
+      "range": "0 to 150 VDC/0 to 30ADC",
+      "least_count": "0.001 VDC/0.001ADC",
+      "instrument_id": "AAMET/ELEC/231",
+      "parameter": "Electro Technical",
+      "calibration_date": "21-Jan-2025",
+      "next_calibration_date": "20-Jan-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000868F",
+      "page_start": 27,
+      "page_end": 27,
+      "pages": [
+        {
+          "page": 27,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Digital Sound Level Meter",
+      "make_model": "Chauvin Arnoux/CA 832",
+      "range": "30 to 130 dB",
+      "least_count": "0.1 dB",
+      "instrument_id": "AAEMT/ELEC/005",
+      "parameter": "Acoustic",
+      "calibration_date": "4-Feb-2025",
+      "next_calibration_date": "3-Feb-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000870F",
+      "page_start": 28,
+      "page_end": 28,
+      "pages": [
+        {
+          "page": 28,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Digital Earth Resistance Tester",
+      "make_model": "Tinsley/-",
+      "range": "20\u2126 to 2000\u2126",
+      "least_count": "0.01 \u2126",
+      "instrument_id": "AAEMT/ELEC/003",
+      "parameter": "Electro Technical",
+      "calibration_date": "4-Feb-2025",
+      "next_calibration_date": "3-Feb-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000871F",
+      "page_start": 29,
+      "page_end": 29,
+      "pages": [
+        {
+          "page": 29,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Cord Real",
+      "make_model": "Sunrise Scientific Instruments/PM-3010",
+      "range": "10 to 99999 rpm",
+      "least_count": "0.1, 1 rpm",
+      "instrument_id": "AAEMT/ELEC/063",
+      "parameter": "Speed",
+      "calibration_date": "4-Feb-2025",
+      "next_calibration_date": "3-Feb-2026",
+      "page_count": 1
+    },
+    {
+      "ulr": "CC405825000000872F",
+      "page_start": 30,
+      "page_end": 31,
+      "pages": [
+        {
+          "page": 30,
+          "page_counter": "1 of 2"
+        },
+        {
+          "page": 31,
+          "page_counter": "2 of 2"
+        }
+      ],
+      "instrument_name": "Digital Multimeter",
+      "make_model": "Fluke/15B+",
+      "range": "As per Manual",
+      "least_count": "As per Range",
+      "instrument_id": "AAEMT/ELEC/216",
+      "parameter": "Electro Technical",
+      "calibration_date": "4-Feb-2025",
+      "next_calibration_date": "3-Feb-2026",
+      "page_count": 2
+    },
+    {
+      "ulr": "CC405825000000873F",
+      "page_start": 32,
+      "page_end": 32,
+      "pages": [
+        {
+          "page": 32,
+          "page_counter": "1 of 1"
+        }
+      ],
+      "instrument_name": "Pink Noise Generator",
+      "make_model": "DongJui/DF1681",
+      "range": "30 to 130 dB",
+      "least_count": "0.1 dB",
+      "instrument_id": "AAEMT/ELEC/079",
+      "parameter": "Acoustic",
+      "calibration_date": "4-Feb-2025",
+      "next_calibration_date": "3-Feb-2026",
+      "page_count": 1
+    }
+  ]
+}

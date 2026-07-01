@@ -1,0 +1,666 @@
+{
+  "meta": {
+    "project": "CalCert",
+    "name": "Historical Calibration Reuse Automation",
+    "version": "1.0.0",
+    "purpose": "Create a new calibration certificate draft by matching a new user-entered instrument job against previously extracted historical certificate data.",
+    "primary_guardrail": "Historical values may be reused only as a tagged draft requiring engineer review and approval. Generated certificates must preserve provenance and must not imply fresh measurement unless the laboratory SOP permits that workflow.",
+    "sample_pdf_observations": {
+      "source_file": "AA Electro Magnetic Test Laboratory Private Limited-2.pdf",
+      "pages": 32,
+      "layout": "Crystal Reports letter-size certificate pages",
+      "important_edge_cases": [
+        "One uploaded PDF can contain many separate certificates.",
+        "Most certificates are one page, but some are multi-page certificates sharing the same Certificate/ULR number.",
+        "Continuation pages may contain result rows without repeating the instrument identification block.",
+        "Calibration result table schemas vary by discipline and instrument type."
+      ],
+      "example_certificates": [
+        {
+          "ulr": "CC205524000002952F",
+          "instrument_name": "Crush Test Machine",
+          "parameter": "Force",
+          "range": "0 to 15 KN",
+          "least_count": "0.01 KN",
+          "page_span": "1"
+        },
+        {
+          "ulr": "CC405825000000872F",
+          "instrument_name": "Digital Multimeter",
+          "parameter": "Electro Technical",
+          "range": "As per Manual",
+          "least_count": "As per Range",
+          "page_span": "30-31"
+        }
+      ]
+    }
+  },
+  "database_entities": {
+    "historical_documents": {
+      "purpose": "Tracks each uploaded source document before and after extraction.",
+      "key_fields": [
+        "id",
+        "source_file_name",
+        "source_uri",
+        "page_count",
+        "uploaded_by",
+        "uploaded_at",
+        "processing_status",
+        "extraction_model",
+        "checksum"
+      ]
+    },
+    "certificates": {
+      "purpose": "One logical certificate record, historical or generated.",
+      "key_fields": [
+        "id",
+        "certificate_ulr_no",
+        "source_document_id",
+        "source_page_start",
+        "source_page_end",
+        "is_generated",
+        "source_certificate_id",
+        "client_name",
+        "client_address",
+        "instrument_name",
+        "instrument_type",
+        "instrument_id",
+        "manufacturer",
+        "model",
+        "serial_number",
+        "discipline_parameter",
+        "range_text",
+        "least_count_text",
+        "instrument_condition",
+        "location_of_calibration",
+        "calibration_reference_standard",
+        "calibration_procedure",
+        "calibration_date",
+        "next_calibration_date",
+        "certificate_issue_date",
+        "environment_json",
+        "quality_status",
+        "pdf_url",
+        "created_at"
+      ]
+    },
+    "calibration_result_sections": {
+      "purpose": "Represents each result table or result group, for example AC Voltage, Resistance, Force, Thermal Uniformity.",
+      "key_fields": [
+        "id",
+        "certificate_id",
+        "section_name",
+        "section_order",
+        "measurement_mode",
+        "uom",
+        "raw_headers_json",
+        "normalized_schema_version"
+      ]
+    },
+    "calibration_result_rows": {
+      "purpose": "Stores reusable measured values, uncertainty values, correction/error values, and calibration points.",
+      "key_fields": [
+        "id",
+        "section_id",
+        "row_order",
+        "nominal_value",
+        "nominal_uom",
+        "range_text",
+        "uuc_value",
+        "standard_value",
+        "observed_values_json",
+        "average_value",
+        "error_value",
+        "correction_value",
+        "uncertainty_value",
+        "uncertainty_uom",
+        "coverage_factor_k",
+        "raw_row_json"
+      ]
+    },
+    "master_equipment": {
+      "purpose": "Stores reference equipment used to produce the historical calibration result.",
+      "key_fields": [
+        "id",
+        "certificate_id",
+        "name",
+        "equipment_id_or_serial",
+        "equipment_certificate_ulr",
+        "certified_by",
+        "valid_upto"
+      ]
+    },
+    "calibration_jobs": {
+      "purpose": "Tracks new user-entered jobs and their matching/generation lifecycle.",
+      "key_fields": [
+        "id",
+        "job_number",
+        "status",
+        "client_name",
+        "client_address",
+        "instrument_name",
+        "instrument_type",
+        "manufacturer",
+        "model",
+        "serial_number",
+        "discipline_parameter",
+        "range_text",
+        "least_count_text",
+        "requested_calibration_points_json",
+        "matched_certificate_id",
+        "match_confidence",
+        "approved_by",
+        "approved_at",
+        "generated_certificate_id"
+      ]
+    },
+    "field_provenance": {
+      "purpose": "Audits every copied, user-entered, auto-generated, and engineer-edited field.",
+      "key_fields": [
+        "id",
+        "job_id",
+        "certificate_id",
+        "field_path",
+        "value",
+        "source_type",
+        "source_certificate_id",
+        "source_row_id",
+        "confidence",
+        "edited_by",
+        "edited_at"
+      ]
+    }
+  },
+  "workflow": [
+    {
+      "step": 1,
+      "module": "HistoricalUploadModule",
+      "purpose": "Accept historical certificate PDFs, images, Excel files, or observation sheets and register them for extraction.",
+      "inputs": [
+        "source_file",
+        "uploaded_by",
+        "document_type_hint"
+      ],
+      "outputs": [
+        "historical_document_id",
+        "source_uri",
+        "processing_status=queued"
+      ],
+      "dependencies": [
+        "Google Drive or Supabase Storage",
+        "PostgreSQL",
+        "background job queue"
+      ],
+      "validation": [
+        "File must be readable.",
+        "Checksum must not already exist unless reprocessing is requested.",
+        "PDF page count must be greater than zero."
+      ],
+      "error_handling": [
+        "Reject unreadable files with a user-visible message.",
+        "Mark duplicate uploads as skipped and link to the existing extraction."
+      ],
+      "retry_logic": {
+        "max_retries": 3,
+        "backoff_seconds": 30
+      }
+    },
+    {
+      "step": 2,
+      "module": "CertificateBoundaryDetectionModule",
+      "purpose": "Split uploaded PDFs into logical certificate records using Certificate/ULR number, page counters, and repeated certificate headers.",
+      "inputs": [
+        "historical_document_id",
+        "pdf_pages"
+      ],
+      "outputs": [
+        "certificate_page_groups"
+      ],
+      "dependencies": [
+        "pdfplumber or Gemini layout extraction",
+        "regular-expression boundary detector",
+        "page image renderer for scanned PDFs"
+      ],
+      "validation": [
+        "Every page must be assigned to exactly one certificate group.",
+        "A repeated ULR with Page 1 of N through Page N of N must be grouped as one certificate.",
+        "A missing ULR must be marked for AI or human review."
+      ],
+      "error_handling": [
+        "If page grouping is ambiguous, group conservatively and mark extraction_quality=needs_review.",
+        "If scanned pages have no text, route to Gemini multimodal extraction."
+      ],
+      "retry_logic": {
+        "max_retries": 2,
+        "fallback": "Gemini page classification"
+      }
+    },
+    {
+      "step": 3,
+      "module": "CertificateExtractionModule",
+      "purpose": "Extract header metadata, UUC identification, environmental conditions, master equipment, result sections, result rows, notes, and signatures from each certificate group.",
+      "inputs": [
+        "certificate_page_group",
+        "page_images",
+        "page_text"
+      ],
+      "outputs": [
+        "raw_certificate_json"
+      ],
+      "dependencies": [
+        "Gemini multimodal model",
+        "pdfplumber table extraction",
+        "Pydantic extraction schema"
+      ],
+      "validation": [
+        "certificate_ulr_no is required.",
+        "instrument_name is required on the first page of a certificate.",
+        "discipline_parameter is required.",
+        "At least one calibration result row is required for reusable records.",
+        "All result sections must preserve raw headers and normalized rows."
+      ],
+      "error_handling": [
+        "If rule extraction and AI extraction disagree, preserve both values and mark the field conflict.",
+        "If result rows are missing, store the header but mark quality_status=incomplete."
+      ],
+      "retry_logic": {
+        "max_retries": 3,
+        "fallback": "Run Gemini with page images plus extracted text"
+      }
+    },
+    {
+      "step": 4,
+      "module": "NormalizationAndValidationModule",
+      "purpose": "Clean extracted values, normalize units, standardize field names, calculate quality scores, and detect suspicious data.",
+      "inputs": [
+        "raw_certificate_json"
+      ],
+      "outputs": [
+        "validated_certificate_json",
+        "quality_report"
+      ],
+      "dependencies": [
+        "unit normalization library",
+        "discipline dictionaries",
+        "Pydantic validators"
+      ],
+      "validation": [
+        "Dates must parse to ISO dates.",
+        "Coverage factor k should be captured when stated.",
+        "Uncertainty values must be numeric when possible.",
+        "Master equipment valid_upto should not be earlier than calibration_date without a warning.",
+        "Result rows must keep both raw and normalized values."
+      ],
+      "error_handling": [
+        "Ambiguous units remain as raw text and are marked needs_unit_review.",
+        "Low-confidence fields are stored but excluded from automatic reuse until reviewed."
+      ],
+      "retry_logic": {
+        "max_retries": 1,
+        "fallback": "human data-quality review queue"
+      }
+    },
+    {
+      "step": 5,
+      "module": "HistoricalPersistenceModule",
+      "purpose": "Store validated historical certificates, result sections, result rows, master equipment, and provenance in PostgreSQL.",
+      "inputs": [
+        "validated_certificate_json",
+        "quality_report"
+      ],
+      "outputs": [
+        "certificate_id",
+        "stored_result_row_count",
+        "stored_master_equipment_count"
+      ],
+      "dependencies": [
+        "PostgreSQL",
+        "SQLAlchemy",
+        "transaction manager"
+      ],
+      "validation": [
+        "certificate_ulr_no must be unique per historical source unless it is a multi-page continuation.",
+        "All result rows must reference a result section.",
+        "Database write must be atomic."
+      ],
+      "error_handling": [
+        "Rollback on partial write failure.",
+        "If duplicate ULR appears with different source content, create a conflict record for review."
+      ],
+      "retry_logic": {
+        "max_retries": 3,
+        "backoff_seconds": 10
+      }
+    },
+    {
+      "step": 6,
+      "module": "NewCalibrationJobModule",
+      "purpose": "Collect new client and instrument input from the CalCert UI.",
+      "inputs": [
+        "client_name",
+        "client_address",
+        "instrument_name",
+        "instrument_type",
+        "manufacturer",
+        "model",
+        "serial_number",
+        "range_text",
+        "least_count_text",
+        "discipline_parameter",
+        "requested_calibration_points"
+      ],
+      "outputs": [
+        "calibration_job_id",
+        "job_number",
+        "status=pending_match"
+      ],
+      "dependencies": [
+        "React frontend",
+        "FastAPI backend",
+        "PostgreSQL"
+      ],
+      "validation": [
+        "client_name, instrument_name, discipline_parameter, and range_text are required.",
+        "discipline_parameter must match a configured discipline.",
+        "serial_number is strongly recommended and should be flagged if missing."
+      ],
+      "error_handling": [
+        "Show inline validation errors in the UI.",
+        "Save incomplete job as draft only if the user chooses to save."
+      ],
+      "retry_logic": {
+        "max_retries": 0
+      }
+    },
+    {
+      "step": 7,
+      "module": "CandidateSearchModule",
+      "purpose": "Find historical certificates that could match the new job using hard filters, fuzzy text search, numeric/unit matching, and calibration-point overlap.",
+      "inputs": [
+        "calibration_job_id",
+        "new_job_fields"
+      ],
+      "outputs": [
+        "ranked_candidate_matches"
+      ],
+      "dependencies": [
+        "PostgreSQL pg_trgm",
+        "rapidfuzz",
+        "unit normalization",
+        "optional pgvector embeddings"
+      ],
+      "validation": [
+        "Candidate confidence scores must be between 0 and 1.",
+        "Candidates with quality_status=bad must be excluded.",
+        "Candidates with incomplete result rows must be eligible only for partial reuse."
+      ],
+      "error_handling": [
+        "If pg_trgm is unavailable, fall back to ILIKE plus rapidfuzz scoring in Python.",
+        "If no candidates score above threshold, route to no-match workflow."
+      ],
+      "retry_logic": {
+        "max_retries": 3,
+        "timeout_seconds": 8,
+        "backoff_seconds": 5
+      }
+    },
+    {
+      "step": 8,
+      "module": "MatchDecisionModule",
+      "purpose": "Classify ranked candidates into auto-prefill, engineer-selection, or no-match paths.",
+      "inputs": [
+        "ranked_candidate_matches"
+      ],
+      "outputs": [
+        "match_decision",
+        "selected_candidate_id",
+        "candidate_explanation"
+      ],
+      "dependencies": [
+        "matching thresholds",
+        "candidate comparison service"
+      ],
+      "validation": [
+        "High-confidence candidates still require engineer approval before certificate generation.",
+        "Tied candidates must never be auto-selected.",
+        "Selected candidate must have at least one reusable result section."
+      ],
+      "error_handling": [
+        "If top candidates are tied, present side-by-side comparison.",
+        "If all candidates are incomplete, route to partial-reuse or fresh-calibration workflow."
+      ],
+      "retry_logic": {
+        "max_retries": 0
+      }
+    },
+    {
+      "step": 9,
+      "module": "DraftCertificateAssemblyModule",
+      "purpose": "Create a new draft certificate by combining new user-provided fields with reusable historical fields from the selected candidate.",
+      "inputs": [
+        "calibration_job",
+        "selected_historical_certificate",
+        "result_sections",
+        "master_equipment"
+      ],
+      "outputs": [
+        "draft_certificate",
+        "field_provenance_records"
+      ],
+      "dependencies": [
+        "certificate number generator",
+        "validity-period rules",
+        "provenance tagging service"
+      ],
+      "validation": [
+        "New client fields must replace historical client fields.",
+        "New certificate number, job number, calibration date, due date, serial number, and customer details must be generated or taken from the new job.",
+        "Copied historical result values must be tagged source_type=historical.",
+        "Every field must have provenance."
+      ],
+      "error_handling": [
+        "Missing reusable field is marked requires_fresh_measurement.",
+        "Invalid date calculation defaults to configured 12-month validity and logs a warning."
+      ],
+      "retry_logic": {
+        "max_retries": 0
+      }
+    },
+    {
+      "step": 10,
+      "module": "EngineerReviewModule",
+      "purpose": "Allow an engineer to review, compare, edit, approve, reject, or send the job to fresh calibration.",
+      "inputs": [
+        "draft_certificate",
+        "ranked_candidate_matches",
+        "field_provenance_records"
+      ],
+      "outputs": [
+        "review_decision",
+        "approved_certificate_payload",
+        "engineer_audit_log"
+      ],
+      "dependencies": [
+        "React review screen",
+        "diff viewer",
+        "audit logging"
+      ],
+      "validation": [
+        "Engineer must explicitly confirm the reuse decision.",
+        "Any edited value must store edited_by, edited_at, and previous_value.",
+        "Approval is blocked if required fields are empty."
+      ],
+      "error_handling": [
+        "Reject sends the job to relaxed search, manual selection, or fresh calibration.",
+        "Session timeout auto-saves the draft."
+      ],
+      "retry_logic": {
+        "max_retries": 0
+      }
+    },
+    {
+      "step": 11,
+      "module": "CertificateGenerationModule",
+      "purpose": "Generate the final PDF certificate from the approved draft using the configured certificate template.",
+      "inputs": [
+        "approved_certificate_payload",
+        "template_id",
+        "engineer_audit_log"
+      ],
+      "outputs": [
+        "generated_certificate_pdf",
+        "generated_certificate_id",
+        "download_url"
+      ],
+      "dependencies": [
+        "HTML template engine",
+        "WeasyPrint or ReportLab",
+        "file storage",
+        "PostgreSQL"
+      ],
+      "validation": [
+        "PDF must contain certificate number, client name, instrument name, calibration date, result rows, and audit footer.",
+        "Generated PDF size must exceed a minimum configured threshold.",
+        "PDF text extraction must find the new certificate number.",
+        "All reused values must be present in the field provenance table."
+      ],
+      "error_handling": [
+        "If the selected template fails, retry with a default template.",
+        "If PDF generation fails after retries, retain approved JSON payload and notify the engineer."
+      ],
+      "retry_logic": {
+        "max_retries": 3,
+        "backoff_seconds": 10
+      }
+    },
+    {
+      "step": 12,
+      "module": "FeedbackAndLearningModule",
+      "purpose": "Record engineer approvals, rejections, edits, and manual selections to improve future matching.",
+      "inputs": [
+        "review_decision",
+        "candidate_scores",
+        "engineer_edits",
+        "generated_certificate_id"
+      ],
+      "outputs": [
+        "matching_feedback_record",
+        "updated_quality_metrics"
+      ],
+      "dependencies": [
+        "analytics tables",
+        "matching-weight configuration",
+        "data-quality queue"
+      ],
+      "validation": [
+        "Feedback must reference the job and candidate certificate.",
+        "Rejected matches must store the rejection reason."
+      ],
+      "error_handling": [
+        "If feedback write fails, queue the event for background retry."
+      ],
+      "retry_logic": {
+        "max_retries": 5,
+        "backoff_seconds": 60
+      }
+    }
+  ],
+  "matching_logic": {
+    "candidate_retrieval": [
+      "Hard filter by discipline_parameter where available.",
+      "Use pg_trgm similarity on instrument_name, manufacturer, model, range_text, and least_count_text.",
+      "Retrieve the top 50 raw candidates for scoring.",
+      "Optionally include semantic vector search for synonyms such as voltmeter and voltage meter."
+    ],
+    "weighted_score": {
+      "instrument_name_similarity": 0.25,
+      "discipline_match": 0.20,
+      "range_numeric_overlap": 0.15,
+      "least_count_similarity": 0.10,
+      "manufacturer_model_similarity": 0.10,
+      "calibration_point_overlap": 0.10,
+      "result_table_schema_similarity": 0.05,
+      "historical_quality_score": 0.05
+    },
+    "thresholds": {
+      "high_confidence": 0.85,
+      "medium_confidence": 0.60,
+      "low_confidence": 0.0,
+      "tie_delta": 0.05
+    },
+    "ranking_rules": [
+      "Sort by weighted score descending.",
+      "If scores are within tie_delta, require engineer selection.",
+      "Prefer newer calibration dates only as a tiebreaker.",
+      "Exclude records with expired master equipment unless engineer explicitly allows historical reuse with a warning.",
+      "Prefer candidates whose result sections cover all requested calibration points."
+    ],
+    "confidence_explanation": {
+      "required": true,
+      "fields": [
+        "total_score",
+        "score_tier",
+        "per_field_scores",
+        "missing_or_weak_fields",
+        "quality_warnings",
+        "why_this_candidate_was_ranked"
+      ]
+    }
+  },
+  "certificate_generation_rules": {
+    "replace_with_new_job_values": [
+      "client_name",
+      "client_address",
+      "job_number",
+      "certificate_ulr_no",
+      "instrument_id if supplied by user",
+      "serial_number",
+      "calibration_date",
+      "next_calibration_date",
+      "certificate_issue_date"
+    ],
+    "reuse_from_historical_dataset": [
+      "instrument_name if user did not override",
+      "instrument_type",
+      "discipline_parameter",
+      "range_text",
+      "least_count_text",
+      "environment_json",
+      "calibration_reference_standard",
+      "calibration_procedure",
+      "master_equipment",
+      "calibration_result_sections",
+      "calibration_result_rows",
+      "uncertainty values",
+      "notes when template requires them"
+    ],
+    "mandatory_audit_footer": "Values marked as historical were retrieved from source certificate {source_certificate_ulr_no}, reviewed by {engineer_name}, and approved on {approval_date}.",
+    "blocked_without_approval": true
+  },
+  "error_scenarios": {
+    "no_match_found": {
+      "trigger": "No candidate above 0.60 confidence.",
+      "response": "Offer fresh calibration, relaxed search, or manual historical selection."
+    },
+    "multiple_high_confidence_matches": {
+      "trigger": "Two or more candidates above 0.85 and within 0.05 score delta.",
+      "response": "Show side-by-side candidate comparison and require engineer selection."
+    },
+    "historical_dataset_incomplete": {
+      "trigger": "Selected candidate is missing required result sections or rows.",
+      "response": "Prefill available fields and mark missing fields requires_fresh_measurement."
+    },
+    "database_unavailable": {
+      "trigger": "PostgreSQL or Supabase cannot be reached.",
+      "response": "Save job, queue matching, retry in background, and show queued status."
+    },
+    "pdf_generation_failed": {
+      "trigger": "PDF rendering fails or validation cannot find required text.",
+      "response": "Retry with default template, then preserve approved JSON for manual generation."
+    },
+    "compliance_block": {
+      "trigger": "Workflow attempts to generate a certificate without review or provenance.",
+      "response": "Block generation and require engineer approval."
+    }
+  }
+}

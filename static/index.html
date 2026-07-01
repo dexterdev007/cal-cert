@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CalCert Automation</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <div class="brand">CalCert</div>
+          <div class="subtitle">Calibration certificate automation</div>
+        </div>
+        <div class="session" id="sessionBar"></div>
+      </header>
+
+      <main id="app"></main>
+    </div>
+
+    <template id="loginTemplate">
+      <section class="auth-layout">
+        <form class="login-panel" id="loginForm">
+          <div class="panel-heading">
+            <h1>Sign in</h1>
+            <span class="status-pill">Local prototype</span>
+          </div>
+          <label>
+            Role
+            <select id="loginRole">
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
+          </label>
+          <label>
+            Email
+            <input id="loginEmail" name="email" autocomplete="username" required>
+          </label>
+          <label>
+            Password
+            <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+          </label>
+          <button class="primary-button" type="submit">Sign in</button>
+          <div class="demo-creds">
+            <span>Admin: admin@calcert.local / admin123</span>
+            <span>User: engineer@calcert.local / user123</span>
+          </div>
+          <p class="form-error" id="loginError"></p>
+        </form>
+      </section>
+    </template>
+
+    <template id="adminTemplate">
+      <section class="workspace-grid">
+        <section class="tool-panel">
+          <div class="panel-heading">
+            <h1>Admin Panel</h1>
+            <span class="status-pill">PDF database</span>
+          </div>
+
+          <div class="upload-zone">
+            <input id="pdfFile" type="file" accept="application/pdf">
+            <div class="button-row">
+              <button id="uploadButton" class="primary-button" type="button">Upload PDF</button>
+              <button id="sampleButton" class="secondary-button" type="button">Load sample PDF</button>
+            </div>
+          </div>
+
+          <div class="metric-strip">
+            <div>
+              <span class="metric-value" id="recordCount">0</span>
+              <span class="metric-label">Historical records</span>
+            </div>
+            <div>
+              <span class="metric-value" id="lastUploadCount">0</span>
+              <span class="metric-label">Last extraction</span>
+            </div>
+          </div>
+
+          <p class="form-error" id="adminError"></p>
+          <p class="form-success" id="adminSuccess"></p>
+        </section>
+
+        <section class="wide-panel">
+          <div class="panel-heading">
+            <h2>Extracted Certificates</h2>
+            <button id="refreshCertificates" class="icon-button" type="button" title="Refresh">Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ULR</th>
+                  <th>Instrument</th>
+                  <th>Parameter</th>
+                  <th>Range</th>
+                  <th>Least Count</th>
+                  <th>Pages</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="certificateRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </template>
+
+    <template id="userTemplate">
+      <section class="engineer-workspace">
+        <div class="workflow-header">
+          <div>
+            <h1>Calibration workspace</h1>
+            <p class="muted">Create a job from a validated historical instrument configuration.</p>
+          </div>
+          <ol class="workflow-steps" aria-label="Workflow progress">
+            <li class="active" data-step="instrument">1 <span>Instrument</span></li>
+            <li data-step="measurements">2 <span>Measurements</span></li>
+            <li data-step="review">3 <span>Review</span></li>
+          </ol>
+        </div>
+
+        <form id="jobForm" class="instrument-job-form">
+          <section class="form-band">
+            <div class="section-heading">
+              <div><span class="section-index">01</span><h2>Job details</h2></div>
+              <span class="section-status">Current job</span>
+            </div>
+            <div class="form-grid four-up">
+              <label>Client name<input name="client_name" required></label>
+              <label>Job number<input name="job_number" required></label>
+              <label>Serial number<input name="serial_number" required></label>
+              <label>Instrument ID<input name="instrument_id" required></label>
+            </div>
+            <label>Client address<textarea name="client_address" rows="2"></textarea></label>
+            <div class="form-grid three-up">
+              <label>Calibration date<input name="calibration_date" type="date" required></label>
+              <label>Due date<input name="next_calibration_date" type="date"></label>
+              <label>Issue date<input name="issue_date" type="date"></label>
+            </div>
+            <div class="form-grid two-up">
+              <label>Certificate number<input name="certificate_number" placeholder="Assigned on approval when blank"></label>
+              <label>ULR number<input name="ulr_number" placeholder="Optional draft value"></label>
+            </div>
+          </section>
+
+          <section class="form-band instrument-band">
+            <div class="section-heading">
+              <div><span class="section-index">02</span><h2>Instrument configuration</h2></div>
+              <span class="section-status" id="instrumentStatus">Not selected</span>
+            </div>
+            <div class="instrument-selector">
+              <label class="search-field">
+                Instrument
+                <input id="instrumentSearch" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="instrumentSuggestions" placeholder="Start typing, for example Di">
+                <ul id="instrumentSuggestions" class="suggestion-list" role="listbox" hidden></ul>
+              </label>
+              <label>
+                Valid configuration
+                <select id="configurationSelect" name="configuration_id" required disabled>
+                  <option value="">Select an instrument first</option>
+                </select>
+              </label>
+            </div>
+            <div id="configurationFacts" class="configuration-facts empty-state">Select an instrument and one of its historical configurations.</div>
+          </section>
+
+          <section class="form-band" id="measurementSection" hidden>
+            <div class="section-heading">
+              <div><span class="section-index">03</span><h2>Current measurements</h2></div>
+              <span class="section-status" id="measurementCount">0 required readings</span>
+            </div>
+            <div id="dynamicMeasurements"></div>
+          </section>
+
+          <section class="form-band" id="environmentSection" hidden>
+            <div class="section-heading">
+              <div><span class="section-index">04</span><h2>Environment</h2></div>
+              <span class="section-status">Current conditions</span>
+            </div>
+            <div class="form-grid three-up">
+              <label>Temperature (°C)<input name="temperature" type="number" step="any" required></label>
+              <label>Relative humidity (%RH)<input name="humidity" type="number" step="any" required></label>
+              <label>Pressure (hPa)<input name="pressure" type="number" step="any"></label>
+            </div>
+          </section>
+
+          <div class="form-actions" id="draftActions" hidden>
+            <p class="form-error" id="userError"></p>
+            <button class="primary-button" type="submit">Create review draft</button>
+          </div>
+        </form>
+
+        <section id="reviewWorkspace" class="review-workspace" hidden>
+          <div class="section-heading review-heading">
+            <div><span class="section-index">05</span><h2>Engineer review</h2></div>
+            <div class="provenance-legend">
+              <span class="legend historical">Historical</span>
+              <span class="legend current">Current</span>
+              <span class="legend calculated">Calculated</span>
+            </div>
+          </div>
+          <div id="resultPanel"></div>
+        </section>
+
+        <section class="history-band">
+          <div class="panel-heading">
+            <h2>Approved certificates</h2>
+            <button id="refreshGenerated" class="secondary-button" type="button">Refresh</button>
+          </div>
+          <div class="table-wrap generated-history">
+            <table>
+              <thead><tr><th>Certificate</th><th>Job</th><th>Client</th><th>Instrument</th><th>Score</th></tr></thead>
+              <tbody id="generatedRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </template>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
